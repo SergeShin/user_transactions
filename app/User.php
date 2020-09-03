@@ -10,6 +10,9 @@ class User extends Authenticatable
 {
     use Notifiable;
 
+    const PERMISSIONS_USER = "user";
+    const PERMISSIONS_ADMIN = "admin";
+
     /**
      * The attributes that are mass assignable.
      *
@@ -36,4 +39,24 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function debit()
+    {
+        return $this->hasOne(UserDebit::class);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
+    public function isAdmin()
+    {
+        return $this->permissions === User::PERMISSIONS_ADMIN;
+    }
+
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = bcrypt($value);
+    }
 }
