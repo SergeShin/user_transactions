@@ -27,12 +27,12 @@ class UserController extends Controller
     {
         $this->authorize('create', User::class);
 
-        $user = $service->create(
+        $user = $service->createUser(
             $request->name,
             $request->email,
             $request->password,
-            $request->permissions,
-        ]));
+            $request->permissions
+        );
 
         return response(
             new UserResource($user),
@@ -40,23 +40,24 @@ class UserController extends Controller
         );
     }
 
-    public function update(UpdateRequest $request, User $user): Response
+    public function update(UpdateRequest $request, User $user, UserService $service): Response
     {
         $this->authorize('update', $user);
 
-        $user->update($request->only([
-            'name',
-            'email'
-        ]));
+        $user = $service->updateUser(
+            $user,
+            $request->name,
+            $request->email
+        );
 
         return response(new UserResource($user), 203);
     }
 
-    public function destroy(Request $request, User $user): Response
+    public function destroy(Request $request, User $user, UserService $service): Response
     {
         $this->authorize('delete', $user);
 
-        $user->delete();
+        $service->deleteUser($user);
 
         return response()->noContent();
     }
