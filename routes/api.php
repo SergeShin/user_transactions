@@ -14,6 +14,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+//Route::middleware('auth:api')->get('/user', function (Request $request) {
+//    return $request->user();
+//});
+
+Route::namespace('Api')->middleware('auth')->group(function () {
+    Route::apiResource('users', 'UserController')
+        ->except(['show']);
+
+    Route::post('users/{user}/transactions', 'UserTransactionsController@store')->name("store_user_transaction");
 });
+
+
+
